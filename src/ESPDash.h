@@ -88,8 +88,7 @@ class ESPDash {
     ~ESPDash();
 
     // Set Authentication
-    void setAuthentication(const char* user, const char* pass);
-    void setAuthentication(const dash::string& user, const dash::string& pass) { setAuthentication(user.c_str(), pass.c_str()); }
+    void setAuthentication(dash::string user, dash::string pass);
 
     // Add a component to the dashboard and return true if the component was added, false if the component ID was already present
     bool add(dash::Component& component);

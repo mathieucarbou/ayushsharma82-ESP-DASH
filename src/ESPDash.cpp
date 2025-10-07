@@ -1,5 +1,7 @@
 #include "ESPDash.h"
 
+#include <utility>
+
 // MessagePack info:
 // - https://msgpack.org
 // - https://github.com/kawanet/msgpack-lite
@@ -127,9 +129,9 @@ ESPDash::ESPDash(AsyncWebServer& server, const char* uri, bool enable_default_st
   _server->addHandler(_ws);
 }
 
-void ESPDash::setAuthentication(const char* user, const char* pass) {
-  username = user;
-  password = pass;
+void ESPDash::setAuthentication(dash::string user, dash::string pass) {
+  username = std::move(user);
+  password = std::move(pass);
   basic_auth = username.length() && password.length();
   if (basic_auth) {
     _ws->setAuthentication(username.c_str(), password.c_str());

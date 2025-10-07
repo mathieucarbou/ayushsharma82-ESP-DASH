@@ -37,15 +37,7 @@ namespace dash {
       const T& value() const { return _value.value(); }
       const std::optional<T>& optional() const { return _value; }
 
-      virtual bool setValue(const T& value) {
-        if (_value == value)
-          return false;
-        _value = value;
-        setChange(Property::VALUE);
-        return true;
-      }
-
-      virtual bool setValue(T&& value) {
+      virtual bool setValue(T value) {
         if (_value == value)
           return false;
         _value = std::forward<T>(value);
@@ -53,12 +45,8 @@ namespace dash {
         return true;
       }
 
-      bool setOptionalValue(const std::optional<T>& value) {
-        return value.has_value() ? setValue(value.value()) : removeValue();
-      }
-
-      bool setOptionalValue(std::optional<T>&& value) {
-        return value.has_value() ? setValue(value.value()) : removeValue();
+      bool setOptionalValue(std::optional<T> value) {
+        return value.has_value() ? setValue(std::forward<T>(value.value())) : removeValue();
       }
 
       bool removeValue() {
@@ -202,17 +190,8 @@ namespace dash {
         return true;
       }
 
-      bool setMessage(const char* message) { return ValueCard<T>::setValue(message); }
-      template <typename U = T, std::enable_if_t<std::is_same_v<U, dash::string>, bool> = true>
-      bool setMessage(const dash::string& message) { return ValueCard<dash::string>::setValue(message); }
-      template <typename U = T, std::enable_if_t<std::is_same_v<U, dash::string>, bool> = true>
-      bool setMessage(dash::string&& message) { return ValueCard<dash::string>::setValue(message); }
-
-      bool setFeedback(const char* message, Status status) { return setStatus(status) | setMessage(message); }
-      template <typename U = T, std::enable_if_t<std::is_same_v<U, dash::string>, bool> = true>
-      bool setFeedback(const dash::string& message, Status status) { return setStatus(status) | setMessage(message); }
-      template <typename U = T, std::enable_if_t<std::is_same_v<U, dash::string>, bool> = true>
-      bool setFeedback(dash::string&& message, Status status) { return setStatus(status) | setMessage(std::move(message)); }
+      bool setMessage(T message) { return ValueCard<T>::setValue(std::forward<T>(message)); }
+      bool setFeedback(T message, Status status) { return setStatus(status) | setMessage(std::forward<T>(message)); }
 
       virtual void toJson(const JsonObject& json, bool onlyChanges) const override {
         ValueCard<T>::toJson(json, onlyChanges);
@@ -314,15 +293,7 @@ namespace dash {
         return true;
       }
 
-      virtual bool setValue(const T& value) override {
-        if (value < _minValue)
-          return ValueCard<T, Precision>::setValue(_minValue);
-        if (value > _maxValue)
-          return ValueCard<T, Precision>::setValue(_maxValue);
-        return ValueCard<T, Precision>::setValue(value);
-      }
-
-      virtual bool setValue(T&& value) override {
+      virtual bool setValue(T value) override {
         if (value < _minValue)
           return ValueCard<T, Precision>::setValue(_minValue);
         if (value > _maxValue)
