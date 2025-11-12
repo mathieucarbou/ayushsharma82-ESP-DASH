@@ -2,6 +2,8 @@
 
 #include "Widget.h"
 
+#include <utility>
+
 namespace dash {
   enum class Status : uint8_t {
     NONE = 0,
@@ -218,10 +220,6 @@ namespace dash {
 
       bool setSubtitle(const char* subtitle) { return ValueCard<T>::setValue(subtitle); }
 
-      virtual void toJson(const JsonObject& json, bool onlyChanges) const override {
-        ValueCard<T>::toJson(json, onlyChanges);
-      }
-
     protected:
   };
 
@@ -237,7 +235,7 @@ namespace dash {
       bool on() { return ValueCard<bool>::setValue(true); }
       bool off() { return ValueCard<bool>::setValue(false); }
 
-      void onChange(std::function<void(bool state)> callback) { _callback = callback; }
+      void onChange(std::function<void(bool state)> callback) { _callback = std::move(callback); }
 
       virtual void onEvent(const JsonObject& json) override {
         if (_callback)
@@ -336,7 +334,7 @@ namespace dash {
         return true;
       }
 
-      void onChange(std::function<void(T value)> callback) { _callback = callback; }
+      void onChange(std::function<void(T value)> callback) { _callback = std::move(callback); }
 
       virtual void onEvent(const JsonObject& json) override {
         if (_callback)

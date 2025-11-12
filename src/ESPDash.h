@@ -43,6 +43,8 @@ Repository URL: https://github.com/ayushsharma82/ESP-DASH
 #include "dash/Statistics.h"
 #include "dash/Widget.h"
 
+#include <utility>
+
 // Controls the payload size: as soon as the payload size reaches this value, the payload is sent to the client
 // This allows to split in batches the payload to avoid sending too large payloads at once
 #ifndef DASH_JSON_SIZE
@@ -109,5 +111,5 @@ class ESPDash {
     // This callback can be used for example to refresh some card values that never change after only when a full layout is request (i.e. on page reload).
     // This allows to avoid spending time refreshing cards that never change, but still allows them to be refreshed hen the user refresh the dashboard.
     // If called from the async_http task, isAsyncAccessInProgress() will return true while in this callback.
-    void onBeforeUpdate(BeforeUpdateCallback callback) { _beforeUpdateCallback = callback; }
+    void onBeforeUpdate(BeforeUpdateCallback callback) { _beforeUpdateCallback = std::move(callback); }
 };
