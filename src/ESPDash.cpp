@@ -172,7 +172,7 @@ void ESPDash::generateLayoutJSON(AsyncWebSocketClient* client, bool changes_only
     doc["command"] = "update:components";
 
     if (onlyComponent) {
-      if (generateLayoutJSON(client, true, onlyComponent, doc, onlyComponent->family()))
+      if (generateLayoutJSON(client, changes_only, onlyComponent, doc, onlyComponent->family()))
         send(client, doc);
 
     } else {
@@ -324,7 +324,7 @@ void ESPDash::refresh(const dash::Component& component) {
   }
   if (_beforeUpdateCallback)
     _beforeUpdateCallback(true);
-  generateLayoutJSON(nullptr, true, &component);
+  generateLayoutJSON(nullptr, false, &component);
 }
 
 /*
